@@ -16,8 +16,6 @@ def get_class_exist_path(l_path, c: list):
                     items = re.split(r"[ ]+", line)
                     if items[0] in c:
                         result.append(file)
-                    # if items[0] == c:
-                    #     result.append(file)
                         break
             print("check class: %d/%d" % (i + 1, total))
         return result
@@ -32,7 +30,8 @@ def copy_txt_files(l_path, e_fs, dst_d_path):
         print("copy txt: %d/%d" % (i+1, total))
 
 
-def delete_other_class(dst_l_path, c: list):
+def delete_other_class(dst_l_path, c: list, renumber: bool):
+    cls_num = []
     for root, dirs, files in os.walk(dst_l_path):
         total = len(files)
         for i, file in enumerate(files):
@@ -43,6 +42,11 @@ def delete_other_class(dst_l_path, c: list):
                 for line in lines:
                     items = re.split(r"[ ]+", line)
                     if items[0] in c:
+                        if not (items[0] in cls_num):
+                            cls_num.append(items[0])
+                        if renumber:
+                            items[0] = str(cls_num.index(items[0]))
+                            line = " ".join(items)
                         f_w.write(line)
             print("delete other class: %d/%d" % (i + 1, total))
 
@@ -66,6 +70,7 @@ if __name__ == "__main__":
                         help="destination root dir")
     parser.add_argument('-c', '--classes', dest="dst_classes", default=['0'], nargs='+',
                         help="input the classes you wanna extract, for example: --classes 0 1 2")
+    parser.add_argument("--renumber", dest="renumber", default=False)
     arg = parser.parse_args()
 
     for item in ["train", "val"]:
@@ -86,7 +91,7 @@ if __name__ == "__main__":
         copy_txt_files(labels_path, e_files, dest_labels_path)
 
         # 第二步：删除移动后的txt中，不需要的class
-        delete_other_class(dest_labels_path, dest_classes)
+        delete_other_class(dest_labels_path, dest_classes, arg.renumber)
 
         # 第三步：将含有指定class的images复制到指定目录
         copy_images(images_dir, dest_images_dir, dest_labels_path)
