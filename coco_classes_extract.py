@@ -64,13 +64,13 @@ def copy_images(img_dir, dst_img_dir, dst_l_path):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser("source dir, destination dir, classes list")
-    parser.add_argument("-s", "--src", dest="src_root", default="./coco_yolo/",
+    parser.add_argument('-s', "--src", dest="src_root", default="./coco_yolo/",
                         help="source root dir of coco_yolo labels and images")
-    parser.add_argument("-d", "--dst", dest="dst_root", default="./coco_yolo_extract/",
+    parser.add_argument('-d', "--dst", dest="dst_root", default="./coco_yolo_extract/",
                         help="destination root dir")
-    parser.add_argument('-c', '--classes', dest="dst_classes", default=['0'], nargs='+',
+    parser.add_argument('-c', "--classes", dest="dst_classes", default=['0'], nargs='+',
                         help="input the classes you wanna extract, for example: --classes 0 1 2")
-    parser.add_argument("--renumber", dest="renumber", default=False)
+    parser.add_argument('-r', "--renumber", action="store_true", help="renumber the class number")
     arg = parser.parse_args()
 
     for item in ["train", "val"]:
